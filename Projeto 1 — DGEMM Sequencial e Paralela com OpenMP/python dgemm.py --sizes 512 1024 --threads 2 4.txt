@@ -1,0 +1,1 @@
+python dgemm.py --sizes 512 1024 --threads 2 4
