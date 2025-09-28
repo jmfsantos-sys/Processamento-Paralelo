@@ -13,26 +13,25 @@ O projeto também gera resultados em **CSV** e um relatório em **Excel** com ta
 - João Manoel Fidelis Santos  
 - Maria Eduarda Guedes Alves  
 
-Disciplina: DEC107 – Processamento Paralelo  
-Curso: Bacharelado em Ciência da Computação  
-
-Data: 27/09/2025
+**Disciplina:** DEC107 – Processamento Paralelo  
+**Curso:** Bacharelado em Ciência da Computação  
+**Data:** 27/09/2025
 
 ---
 
 ## Funcionalidades
 
-1. Multiplicação de matrizes:
+1. **Multiplicação de matrizes:**
    - Sequencial otimizada
    - Paralela otimizada (OpenMP)
    - BLAS (referência de alta performance)
-2. Medição de:
+2. **Medição de:**
    - Tempo de execução médio
    - GFLOPS
    - Speedup
    - Eficiência paralela real
 3. Geração de arquivos CSV com os resultados
-4. Script Python para:
+4. **Script Python para:**
    - Ler os CSVs
    - Gerar tabelas organizadas
    - Criar gráficos de Tempo, GFLOPS, Speedup e Eficiência
@@ -46,62 +45,126 @@ Data: 27/09/2025
 
 .
 ├── vPalV9_final.c          # Código principal com saída de log detalhada
-├── vPalV6_clean_csv.c      # Código com saída CSV
+
+
+├── vPalV6_clean_csv.c      # Código com saída CSV para análise
+
+
+├── plot_dgemm.py           # Script Python para geração de relatório Excel
+
+
 ├── resultados.csv          # Arquivo CSV gerado pelos testes
-├── analisar_resultados.py  # Script Python para geração de relatório Excel
+
+
 └── README.md               # Este arquivo
 
 
-
 ---
 
-## Compilação e Execução
+## Passo a Passo para Execução Completa (Linux/WSL)
 
-### Compilação com GCC (Linux / WSL)
-
-bash
-gcc -fopenmp -O3 vPalV6_clean_csv.c -o dgemm -lblas
-
-
-### Execução
+### 1. Atualização do Sistema e Pacotes
 
 bash
-./dgemm > resultados.csv
+
+sudo apt update
+
+sudo apt upgrade -y
+
+sudo apt autoremove
 
 
-> ⚠️ Certifique-se de que a biblioteca BLAS (cblas) está instalada no seu sistema.
-
----
-
-## Geração de Relatório
-
-O script Python analisar_resultados.py processa o CSV gerado e produz:
-
-* Tabela organizada de desempenho por tamanho de matriz e número de threads
-* Gráficos de:
-
-  * Tempo de execução
-  * GFLOPS
-  * Speedup
-  * Eficiência
-* Relatório Excel completo (relatorio_dgemm.xlsx) com tabelas e gráficos incorporados
-
-### Execução do script Python
+### 2. Instalação de Compiladores e Bibliotecas
 
 bash
-python plot_dgemm.py
 
+sudo apt install -y build-essential libopenblas-dev libcblas-dev libatlas-base-dev
+
+
+### 3. Instalação do Python e Bibliotecas de Análise
+
+bash
+
+sudo apt install -y python3-pip python3-pandas python3-matplotlib python3-xlsxwriter
+
+pip3 install openpyxl
+
+
+### 4. Navegação até o Diretório do Projeto
+
+
+### 5. Compilação dos Códigos com OpenMP e BLAS
+
+bash
+# Versão CSV para análise completa
+
+gcc -O3 -fopenmp -o dgemm_csv vPalV6_clean_csv.c -lopenblas
+
+# Versões sequencial e BLAS para comparação
+
+gcc -O3 -fopenmp -o dgemm_seq vPalV6_clean.c
+
+gcc -O3 -fopenmp -o dgemm_blas vPalV6_clean.c -lopenblas
+
+gcc -O3 -fopenmp -o dgemm_seq vPalV6_clean_csv.c
+
+gcc -O3 -fopenmp -o dgemm_blas vPalV6_clean_csv.c -lopenblas
+
+### 6. Execução dos Programas
+
+bash
+
+# Gerar arquivo CSV com resultados
+
+./dgemm_csv > resultados.csv
+
+
+# Testes adicionais para log detalhado
+
+./dgemm_seq
+
+./dgemm_blas
+
+
+### 7. Verificação dos Resultados
+
+bash
+
+head -n 5 resultados.csv
+
+
+### 8. Geração de Relatórios com Python
+
+bash
+
+python3 plot_dgemm.py
+
+
+> O script processa resultados.csv e gera relatorio_dgemm.xlsx com tabelas e gráficos de:
+> 
+>
+> * Tempo de execução
+> * 
+> * GFLOPS
+> * 
+> * Speedup
+> * 
+> * Eficiência
+> * 
 
 ---
 
 ## Exemplo de Saída
 
-**CSV:**
+**CSV gerado:**
 
 
 N,Threads,Tempo,GFLOPS,Speedup,Eficiencia
+
 512,1,0.123,4.56,1.00,100.00
+
 512,2,0.067,8.38,1.83,91.50
+
 ...
 
 
@@ -117,7 +180,7 @@ N,Threads,Tempo,GFLOPS,Speedup,Eficiencia
 ## Observações
 
 * O código paraleliza o laço externo da multiplicação (i) usando OpenMP.
-* As matrizes são inicializadas com valores aleatórios para cada execução.
+* As matrizes são inicializadas com valores aleatórios a cada execução.
 * A eficiência real pode ultrapassar 100% em casos de otimizações de cache ou escalonamento de threads.
 * O script Python detecta automaticamente o separador do CSV e limpa dados inválidos.
 
@@ -126,3 +189,4 @@ N,Threads,Tempo,GFLOPS,Speedup,Eficiencia
 ## Licença
 
 Este projeto é de uso acadêmico e pode ser utilizado para estudo e experimentos em Processamento Paralelo.
+
