@@ -1,11 +1,10 @@
 /*
 =============================================================================
-Arquivo: vPalV9_final.c
 Projeto 1  Multiplicao de Matrizes (DGEMM) Sequencial e Paralela com OpenMP
 =============================================================================
 Disciplina: DEC107  Processamento Paralelo
 Curso: Bacharelado em Cincia da Computao
-Autores: Joo Manoel Fidelis Santos e Maria Eduarda Guedes Alves
+Autores: Joao Manoel Fidelis Santos e Maria Eduarda Guedes Alves
 Data: 27/09/2025
 
 Objetivo do projeto:
@@ -22,7 +21,6 @@ Objetivo do projeto:
 #include <cblas.h>
 #include <time.h>
 
-// --- Prottipos das funes ---
 void imprimir_informacoes_iniciais(void);
 void imprimir_hardware(void);
 double* matriz_alocar(int n);
@@ -30,7 +28,6 @@ void inicializa_matrizes(double *A, double *B, double *C, int n);
 void dgemm_sequencial_otimizado(double *A, double *B, double *C, int n);
 void dgemm_paralelo_otimizado(double *A, double *B, double *C, int n);
 
-// --- Funo principal ---
 int main(void) {
   imprimir_informacoes_iniciais();
 
@@ -59,7 +56,6 @@ int main(void) {
 
     printf("\n[LOG] Executando testes para matriz de tamanho %dx%d...\n", tam_matriz, tam_matriz);
 
-    // --- 1. Teste Sequencial (Mdia de 3) ---
     double tempo_seq_total = 0.0;
     for (int rep = 0; rep < NUM_REPETICOES; rep++) {
       inicializa_matrizes(A, B, C, tam_matriz);
@@ -73,7 +69,6 @@ int main(void) {
     printf("| %-8d | %-8s | %-12.6f | %-10.3f | %-10s | %-10s |\n",
        tam_matriz, "1 (Seq)", tempo_seq_medio, gflops_seq, "1.00x", "100.00%");
 
-    // --- 2. Testes Paralelos (Mdia de 3) ---
     for (int t = 0; t < num_thread_counts; t++) {
       int n_threads = contagens_threads[t];
       omp_set_num_threads(n_threads);
@@ -89,13 +84,12 @@ int main(void) {
       double tempo_par_medio = tempo_par_total / NUM_REPETICOES;
 
       double speedup = tempo_seq_medio / tempo_par_medio;
-      double eficiencia = (speedup / (double)n_threads) * 100.0; // Eficincia real, pode ser >100%
+      double eficiencia = (speedup / (double)n_threads) * 100.0; 
       double gflops_par = (flops / tempo_par_medio) / 1e9;
       printf("| %-8d | %-8d | %-12.6f | %-10.3f | %-10.3fx | %-9.2f%% |\n",
          tam_matriz, n_threads, tempo_par_medio, gflops_par, speedup, eficiencia);
     }
 
-    // --- 3. Teste BLAS (Mdia de 3) ---
     double tempo_blas_total = 0.0;
     for (int rep = 0; rep < NUM_REPETICOES; rep++) {
       inicializa_matrizes(A, B, C, tam_matriz);
@@ -120,7 +114,6 @@ int main(void) {
   return 0;
 }
 
-// --- Funes de multiplicao (sem medir tempo) ---
 void dgemm_sequencial_otimizado(double *A, double *B, double *C, int n) {
   long n_long = n;
   for (long i = 0; i < n_long; i++) {
@@ -146,7 +139,6 @@ void dgemm_paralelo_otimizado(double *A, double *B, double *C, int n) {
   }
 }
 
-// --- Funes auxiliares ---
 double* matriz_alocar(int n) {
   double *M = (double*) malloc((size_t)n * (size_t)n * sizeof(double));
   if (!M) { printf("\nERRO: Falha na alocacao de memoria.\n"); exit(-1); }
@@ -188,4 +180,5 @@ void imprimir_hardware(void) {
   printf(" - RAM: 40 GB DDR4 (Dual Channel)\n");
   printf(" - GPU: AMD Radeon Graphics (Integrada, Vega)\n");
   printf("----------------------------------\n");
+
 }
